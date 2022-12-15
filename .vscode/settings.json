@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "lol.h": "c",
+        "stdio.h": "c",
+        "socket.h": "c"
+    },
+    "liveServer.settings.port": 5501
+}

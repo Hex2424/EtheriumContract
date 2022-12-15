@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.9.0;
+pragma solidity >=0.5.0 <0.9.0;
 
 contract Deal {
     /* define variable greeting of the type string */
@@ -11,8 +11,9 @@ contract Deal {
     }
 
     /* change greeting */
-    function changeGreeting(string memory _greeting) public {
+    function changeGreeting(string memory _greeting) public returns (string memory){
         greeting = _greeting;
+        return greeting;
     }
 
     /* main function */
