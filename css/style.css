@@ -408,9 +408,6 @@ body {
 }
 
 .connect_button{
-  position: absolute;
-  left: 0;
-  top: 0;
   border-radius: 15%;
   animation: setShip 0.5s forwards;
   background-color: #0c8;

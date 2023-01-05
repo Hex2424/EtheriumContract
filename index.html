@@ -1792,12 +1792,18 @@
   </div>
   
   <a class="player-link switch" href="#p1"> 
-    <button class="connect_button" id="connect_button" onclick="connect()">Connect Game</button>
+    <button class="connect_button" id="connect_button" onclick="connect()">Connect Metamask</button>
   </a><br>
+  <label for="selector">your account:</label><br>
+  <select id="selector_your"></select><br><br>
 
-  <button class="connect_button" id="generate_button" onclick="generateMap()">Generate Map</button>
-  <button class="connect_button" id="generate_button" onclick="generateMap()">Generate Map</button>
-  
+  <label for="selector">enemy account:</label><br>
+  <select id="selector_enemy"></select><br><br>
+
+  <button class="connect_button" id="generate_button" onclick="generateMap()">Connect Players</button><br>
+  <button class="connect_button" id="generate_button" onclick="generateMap()">Generate Map</button><br>
+  <button class="connect_button" id="generate_button" onclick="setMapOfContract()">Apply map</button>
+
 
   <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
   <script src="frontend.js"></script>

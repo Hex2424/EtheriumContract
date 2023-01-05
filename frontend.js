@@ -20,51 +20,168 @@
 //     console.log(ss);
 //  });
 const abi = [
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_greeting",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_greeting",
-          "type": "string"
-        }
-      ],
-      "name": "changeGreeting",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "greet",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function",
-      "constant": true
-    }
-  ];
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "message",
+        "type": "string"
+      }
+    ],
+    "name": "Message",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "player1",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [],
+    "name": "player2",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "playerGrid",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "playerState",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "shotsTaken",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newPlayer1",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "newPlayer2",
+        "type": "address"
+      }
+    ],
+    "name": "setPlayers",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function",
+    "payable": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8[10][10]",
+        "name": "newGrid",
+        "type": "uint8[10][10]"
+      }
+    ],
+    "name": "setGrid",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "x",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "y",
+        "type": "uint256"
+      }
+    ],
+    "name": "takeShot",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
 
 // var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
@@ -74,7 +191,7 @@ const abi = [
 // Call a function of the contract
 var contract
 var fromAddress;
-
+var toAddress;
 
 
 async function test()
@@ -102,10 +219,9 @@ async function connect()
         return;
     }
 
-  
     await window.ethereum.request({method: "eth_requestAccounts"});
     var w3 = new Web3(window.ethereum);
-    contract = new w3.eth.Contract(abi, "0x951e72827cADe94Cfa856ABB01b0fC17886f60A0");
+    contract = new w3.eth.Contract(abi, "0x48f484714d40B1c23472B6cBfa1C323E73f3fEb6");
 
     w3.eth.getAccounts((error, accounts) => {
         if (error) {
@@ -114,11 +230,67 @@ async function connect()
           // The user's Ethereum addresses are stored in the accounts array
           // You can use the first address in the array as the from parameter
           // when calling a contract function
-            fromAddress = accounts[0];
+            setupAddresses(accounts);
         }
     });
 
+    enemyAddress = document.getElementById("enemy_address_input").value;
+
+    await contract.methods.setPlayers(fromAddress, enemyAddress).send(
+    {
+        from: fromAddress,
+        gas: "21000"
+    }).then(function(result) 
+    {
+      console.log(result);
+      
+    }).catch(function(error) 
+    {
+      console.log(error.message);
+      
+    });
+
+
 }
+
+function setupAddresses(addreses)
+{
+    var selector_your = document.getElementById("selector_your");
+    var selector_enemy = document.getElementById("selector_enemy");
+
+    selector_your.addEventListener("change", function() {
+      fromAddress = addreses[this.selectedIndex];
+    });
+
+
+    selector_enemy.addEventListener("change", function() {
+      toAddress = addreses[this.selectedIndex];
+    });
+
+    selector_your.innerHTML = '';
+    selector_enemy.innerHTML = '';
+
+    // Loop through the options and add them to the select element
+    for (var i = 0; i < addreses.length; i++) {
+      var option = document.createElement("option");
+      option.value = "Account" + (i + 1) + "("+ addreses[i] + ")";
+      option.text = "Account" + (i + 1) + "("+ addreses[i] + ")";
+      selector_your.add(option);
+    }
+
+    // Loop through the options and add them to the select element
+    for (var i = 0; i < addreses.length; i++) {
+      var option = document.createElement("option");
+      option.value = "Account" + (i + 1) + "("+ addreses[i] + ")";
+      option.text = "Account" + (i + 1) + "("+ addreses[i] + ")";
+      selector_enemy.add(option);
+    }
+
+    toAddress = addreses[this.selectedIndex];
+    fromAddress = addreses[this.selectedIndex];
+    
+}
+
 
 
 function generateMap() {
@@ -128,6 +300,36 @@ function generateMap() {
     getShipChecker(shipPart.x, shipPart.y).checked = true;
   });
 }
+
+async function setMapOfContract()
+{
+  const array = Array.from({length: 10}, () => new Array(10));
+
+  for (let x = 0; x < 10; x++) {
+    for (let y = 0; y < 10; y++) {
+
+      array[x][y] = getShipChecker(x, y).checked;
+
+    }
+  }
+
+  await contract.methods.setGrid(array).send(
+  {
+      from: fromAddress,
+      gas: "21000"
+  }).then(function(result) 
+  {
+    console.log(result);
+    
+  }).catch(function(error) 
+  {
+    console.log(error.message);
+
+  });
+
+}
+
+
 
 function getShipChecker(x, y)
 {
