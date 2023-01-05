@@ -19,10 +19,11 @@ contract Deal {
     event Message(string message);
 
 
-   function setPlayers(address newPlayer1, address newPlayer2) public {
+   function setPlayers(address newPlayer1, address newPlayer2) public payable {
         require(newPlayer1 != address(0) && newPlayer2 != address(0), "Invalid player addresses");
         require(newPlayer1 != newPlayer2, "Player addresses must be different");
         require((player1 == address(0) || player1 == msg.sender) && (player2 == address(0) || player2 == msg.sender), "Sender is already a player");
+        require(msg.value == 1 ether && (newPlayer1.balance >= 1 ether) && (newPlayer2.balance >= 1 ether), "Players must have a balance of at least 1 Ether");
 
         if (player1 == address(0)) {
             player1 = newPlayer1;

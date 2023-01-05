@@ -234,9 +234,24 @@ async function connect()
         }
     });
 
-    enemyAddress = document.getElementById("enemy_address_input").value;
+}
 
-    await contract.methods.setPlayers(fromAddress, enemyAddress).send(
+
+async function connectToGame(){
+  if(fromAddress == undefined)
+  {
+    alert("Your address not selected");
+    return;
+  }
+
+  if(toAddress == undefined)
+  {
+    alert("Your enemy address not selected");
+    return;
+  }
+
+
+  await contract.methods.setPlayers(fromAddress, toAddress).send(
     {
         from: fromAddress,
         gas: "21000"
@@ -249,9 +264,8 @@ async function connect()
       console.log(error.message);
       
     });
-
-
 }
+
 
 function setupAddresses(addreses)
 {
@@ -262,13 +276,15 @@ function setupAddresses(addreses)
       fromAddress = addreses[this.selectedIndex];
     });
 
-
-    selector_enemy.addEventListener("change", function() {
-      toAddress = addreses[this.selectedIndex];
-    });
-
+    if(selector_enemy.value == '')
+    {
+      alert("Write enemy address");
+      return;
+    }
+    
     selector_your.innerHTML = '';
     selector_enemy.innerHTML = '';
+    console.log(addreses)
 
     // Loop through the options and add them to the select element
     for (var i = 0; i < addreses.length; i++) {
@@ -278,19 +294,11 @@ function setupAddresses(addreses)
       selector_your.add(option);
     }
 
-    // Loop through the options and add them to the select element
-    for (var i = 0; i < addreses.length; i++) {
-      var option = document.createElement("option");
-      option.value = "Account" + (i + 1) + "("+ addreses[i] + ")";
-      option.text = "Account" + (i + 1) + "("+ addreses[i] + ")";
-      selector_enemy.add(option);
-    }
 
-    toAddress = addreses[this.selectedIndex];
-    fromAddress = addreses[this.selectedIndex];
-    
+    toAddress = selector_enemy.value;
+    fromAddress = addreses[0];
+
 }
-
 
 
 function generateMap() {
